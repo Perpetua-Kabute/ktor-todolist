@@ -1,5 +1,6 @@
 package com.perpetua.plugins
 
+import InMemoryToDoRepository
 import com.perpetua.entities.ToDo
 import io.ktor.routing.*
 import io.ktor.http.*
@@ -19,25 +20,35 @@ fun Application.configureRouting() {
     }
     // Starting point for a Ktor app:
     routing {
+        val repository = InMemoryToDoRepository()
 
-        val todo = listOf<ToDo>(
-            ToDo(1, "Create a repository", true),
-            ToDo(2, "Start engaging with the content", true),
-            ToDo(3, "Finish the tutorial", false),
-            ToDo(4, "Do my own project now", false)
-        )
         get("/") {
             call.respondText("Hello World!")
         }
 //        route to all todos
         get("/todos"){
-            call.respond(todo)
+            call.respond(repository.getAllToDos())
         }
 //        route to a single to do
         get("/todos/{id}"){
 //            to get the parameters you specified in the url
-            val id = call.parameters["id"]
-            call.respondText("Todolist details for ToDo item no.$id")
+            val id = call.parameters["id"]?.toIntOrNull()
+            if(id == null){
+                call.respond(HttpStatusCode.BadRequest, "Id has to be a number")
+                return@get
+            }
+
+            val todo = repository.getTodo(id)
+            if(todo == null){
+                call .respond(
+                    HttpStatusCode.NotFound,
+                    "Id does not exist"
+                )
+            }else{
+                call.respond(todo)
+            }
+
+
         }
 
         post("/todos"){
