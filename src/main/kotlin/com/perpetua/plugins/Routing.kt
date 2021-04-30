@@ -9,6 +9,8 @@ import io.ktor.request.*
 fun Application.configureRouting() {
     // Starting point for a Ktor app:
     routing {
+
+        val todo = listOf<>()
         get("/") {
             call.respondText("Hello World!")
         }

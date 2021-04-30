@@ -1,8 +1,11 @@
 # Default ignored files
 /shelf/
-/workspace.xml
+/.idea/workspace.xml
 # Datasource local storage ignored files
 /../../../../../../:\Users\Baby boy\IdeaProjects\ktor-todolist\.idea/dataSources/
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+.idea
+out/
+.gradle
