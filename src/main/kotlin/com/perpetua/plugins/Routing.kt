@@ -1,6 +1,7 @@
 package com.perpetua.plugins
 
 import InMemoryToDoRepository
+import ToDoDraft
 import io.ktor.routing.*
 import io.ktor.http.*
 import io.ktor.application.*
@@ -48,15 +49,43 @@ fun Application.configureRouting() {
         }
 
         post("/todos"){
-
+            val todoDraft = call.receive<ToDoDraft>()
+            val todo = repository.addTodo(todoDraft)
+            call.respond(todo)
         }
 //         edit a single to do
         put("todos/{id}"){
+            val toDoDraft = call.receive<ToDoDraft>()
+            val todoId = call.parameters["id"]?.toIntOrNull()
+            if(todoId == null){
+                call.respond(HttpStatusCode.BadRequest, "Id has to be a number")
+                return@put
+            }
+            val updated = repository.updateTodo(todoId, toDoDraft)
+
+            if(updated){
+                call.respond(HttpStatusCode.OK)
+            }else{
+                call.respond(HttpStatusCode.NotFound, "No todo with the id $todoId")
+            }
 
         }
 
         delete("/todos/{id}"){
+            val todoId = call.parameters["id"]?.toIntOrNull()
 
+            if(todoId == null){
+                call.respond(HttpStatusCode.BadRequest, "Id has to be a number")
+                return@delete
+            }
+
+            val deleted = repository.deleteTodo(todoId)
+
+            if(deleted){
+                call.respond(HttpStatusCode.OK)
+            }else{
+                call.respond(HttpStatusCode.NotFound, "No todo with the id $todoId")
+            }
         }
     }
 
