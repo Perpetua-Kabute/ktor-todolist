@@ -1,7 +1,6 @@
 package com.perpetua.plugins
 
 import InMemoryToDoRepository
-import com.perpetua.entities.ToDo
 import io.ktor.routing.*
 import io.ktor.http.*
 import io.ktor.application.*
@@ -13,10 +12,7 @@ import io.ktor.request.*
 fun Application.configureRouting() {
     install(CallLogging)
     install(ContentNegotiation){
-        gson{
-            setPrettyPrinting()
-            disableHtmlEscaping()
-        }
+       gson()
     }
     // Starting point for a Ktor app:
     routing {
@@ -31,7 +27,7 @@ fun Application.configureRouting() {
         }
 //        route to a single to do
         get("/todos/{id}"){
-//            to get the parameters you specified in the url
+//          to get the parameters you specified in the url
             val id = call.parameters["id"]?.toIntOrNull()
             if(id == null){
                 call.respond(HttpStatusCode.BadRequest, "Id has to be a number")
